@@ -1,6 +1,12 @@
 var mongoose = require("mongoose");
+require('dotenv').config();
+const DATABASE = process.env.DATABASE
 
-mongoose.connect("mongodb://127.0.0.1:27017/docify")
+
+// mongoose.connect("mongodb://127.0.0.1:27017/docify")
+// mongoose.connect( `${DATABASE}/docify`)
+
+mongoose.connect(DATABASE)
 
 const userschema = new mongoose.Schema({
     name : String,

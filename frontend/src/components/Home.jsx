@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import { BsPlusLg } from "react-icons/bs";
 import { MdOutlineTitle } from "react-icons/md";
 import Docs from "./Docs";
-import { api_base_url } from "../Helper"
+import { api_base_url } from "../Helper";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -13,16 +13,14 @@ const Home = () => {
   const [data, setData] = useState(null);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     getData();
-  }, [])
+  }, []);
 
   const createDoc = () => {
     if (title === "") {
-      setError("Please Enter Title")
-    }
-    else {
+      setError("Please Enter Title");
+    } else {
       fetch(api_base_url + "/createDoc", {
         mode: "cors",
         method: "POST",
@@ -31,20 +29,20 @@ const Home = () => {
         },
         body: JSON.stringify({
           docName: title,
-          userId: localStorage.getItem("userId")
-        })
-      }).then(res => res.json())
-        .then(data => {
+          userId: localStorage.getItem("userId"),
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
           if (data.success) {
             setIsCreateModelShow(false);
-            navigate(`/createDocs/${data.docId}`)
+            navigate(`/createDocs/${data.docId}`);
+          } else {
+            setError(data.message);
           }
-          else {
-            setError(data.message)
-          }
-        })
+        });
     }
-  }
+  };
 
   const getData = () => {
     fetch(api_base_url + "/getAllDocs", {
@@ -54,14 +52,14 @@ const Home = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: localStorage.getItem("userId")
-      })
-    }).then(res => res.json())
-      .then(data => {
-        setData(data.docs)
-      })
-  }
-
+        userId: localStorage.getItem("userId"),
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data.docs);
+      });
+  };
 
   return (
     <>
@@ -72,7 +70,7 @@ const Home = () => {
           className="btnBlue"
           onClick={() => {
             setIsCreateModelShow(true);
-            document.getElementById('title');
+            document.getElementById("title");
           }}
         >
           <i>
@@ -83,13 +81,19 @@ const Home = () => {
       </div>
 
       <div className="allDocs px-[100px] mt-4">
-        {
-          data ? data.map((el, index) => {
-            return (<>
-              <Docs docs={el} key={el} docID={`doc-${index + 1}`} />
-            </>)
-          }) : ""
-        }
+        {data
+          ? data.map((el, index) => {
+            return (
+              <>
+                <Docs
+                  docs={el}
+                  key={el}
+                  docID={`doc-${index + 1}`}
+                />
+              </>
+            );
+          })
+          : ""}
       </div>
 
       {isCreateModelShow ? (
@@ -104,7 +108,10 @@ const Home = () => {
                   <i>
                     <MdOutlineTitle />
                   </i>
-                  <input onChange={(e) => { setTitle(e.target.value) }}
+                  <input
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                    }}
                     value={title}
                     type="text"
                     placeholder="Title"
@@ -137,8 +144,6 @@ const Home = () => {
       ) : (
         ""
       )}
-
-
     </>
   );
 };

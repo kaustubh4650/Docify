@@ -15,7 +15,6 @@ const Login = () => {
 
   const login = (e) => {
     e.preventDefault();
-    console.log("Attempting login with:", email, pwd); // Log login attempt
     fetch(api_base_url + "/login", {
       mode: "cors",
       method: "POST",
@@ -29,7 +28,7 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Login response:", data); // Log response from server
+
         if (data.success === true) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("isLoggedIn", true);
@@ -41,7 +40,7 @@ const Login = () => {
         } else {
           setError(data.message);
         }
-      }).catch((error) => console.error("Error during login:", error)); // Log any errors
+      })
 
   };
 

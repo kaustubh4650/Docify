@@ -5,16 +5,14 @@ import deleteImg from "../images/delete.png";
 import { api_base_url } from "../Helper";
 import { useNavigate } from "react-router-dom";
 
-
 const Docs = ({ docs }) => {
-
-    const [error, setError] = useState("")
+    const [error, setError] = useState("");
     const [isDeleteModelShow, setIsDeleteModelShow] = useState(false);
     const navigate = useNavigate();
     const docID = `doc-${docs._id}`;
 
     const deleteDoc = (id, docID) => {
-        let doc = document.getElementById(docID)
+        let doc = document.getElementById(docID);
         fetch(api_base_url + "/deleteDoc", {
             mode: "cors",
             method: "POST",
@@ -23,75 +21,100 @@ const Docs = ({ docs }) => {
             },
             body: JSON.stringify({
                 docId: id,
-                userId: localStorage.getItem("userId")
-            })
-        }).then(res => res.json()).then(data => {
-            if (data.success === false) {
-                setError(data.message)
-            }
-            else {
-                setIsDeleteModelShow(false)
-                setTimeout(() => {
-                    alert(data.message)
-                }, 500)
-                doc.remove();
-            }
+                userId: localStorage.getItem("userId"),
+            }),
         })
-    }
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success === false) {
+                    setError(data.message);
+                } else {
+                    setIsDeleteModelShow(false);
+                    setTimeout(() => {
+                        alert(data.message);
+                    }, 500);
+                    doc.remove();
+                }
+            });
+    };
 
     return (
         <>
-            <div id={docID} className="docs cursor-pointer rounded-lg flex items-center justify-between mt-2 p-[10px] transition-all bg-[#f0f0f0] hover:bg-[#dcdcdc]">
-                <div onClick={() => { navigate(`/createDocs/${docs._id}`) }} className="left items-center flex gap-2">
-                    <img src={docsIcon} alt="" />
-                    <div>
-                        <h3 className="text-[23px]">{docs.title}</h3>
-                        <p className="text-[14px] text-[#808080]">
-                            Created In : {new Date(docs.date).toDateString()} | Last Updated : {new Date(docs.lastUpdate).toDateString()}
+            {/* Document Card */}
+            <div
+                id={docID}
+                className="docs cursor-pointer rounded-lg flex items-center justify-between mt-2 p-4 transition-all bg-[#f0f0f0] hover:bg-[#dcdcdc]"
+            >
+                <div
+                    onClick={() => {
+                        navigate(`/createDocs/${docs._id}`);
+                    }}
+                    className="left flex items-center gap-4 w-full sm:w-auto"
+                >
+                    <img
+                        src={docsIcon}
+                        alt="Document Icon"
+                        className="h-10 w-10 sm:h-12 sm:w-12"
+                    />
+                    <div className="flex-1">
+                        <h3 className="text-lg sm:text-xl font-medium">{docs.title}</h3>
+                        <p className="text-sm sm:text-base text-gray-500">
+                            Created: {new Date(docs.date).toDateString()} | Updated:{" "}
+                            {new Date(docs.lastUpdate).toDateString()}
                         </p>
                     </div>
                 </div>
+
+                {/* Delete Button aligned with the title */}
                 <div className="docsRight">
-                    <i onClick={() => { setIsDeleteModelShow(true) }} className="delete text-[40px] text-red-500 cursor-pointer transition-all hover:text-red-600">
+                    <i
+                        onClick={() => {
+                            setIsDeleteModelShow(true);
+                        }}
+                        className="delete text-3xl sm:text-4xl text-red-500 cursor-pointer transition-all hover:text-red-600"
+                    >
                         <MdDelete />
                     </i>
                 </div>
             </div>
 
-
-            {
-                isDeleteModelShow ?
-                    <>   <div className="deleteDocsModelCon top-0 left-0 bottom-0 right-0 fixed bg-[rgb(0,0,0,0.3)] w-screen h-screen flex flex-col items-center justify-center">
-                        <div className="deleteModel flex flex-col justify-center p-[15px] bg-[#fff] rounded-lg h-[35vh] w-[35vw]">
-                            <h3 className="text-[20px]">Delete Document</h3>
-                            <div className="flex items-center gap-3">
-                                <img
-                                    src={deleteImg}
-                                    alt="" />
-                                <div>
-                                    <h3 className="text-[20px]">
-                                        Do you want delete this document ?
-                                    </h3>
-                                    <p className="text-[14px] text-[#808080]">Delete / Cancel</p>
-                                </div>
-                            </div>
-                            <div className="flex mt-4 items-center gap-2 w-full justify-between">
-                                <button onClick={() => { deleteDoc(docs._id, docID) }} className="p-[10px] bg-red-500 text-white rounded-lg cursor-pointer border-0 !min-w-[49%]">
-                                    Delete
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setIsDeleteModelShow(false);
-                                    }}
-                                    className="p-[10px] bg-[#d1d5db] text-black rounded-lg cursor-pointer border-0 min-w-[49%]"
-                                >
-                                    Cancel
-                                </button>
+            {/* Delete Confirmation Modal */}
+            {isDeleteModelShow && (
+                <div className="deleteDocsModelCon fixed inset-0 bg-[rgba(0,0,0,0.3)] flex items-center justify-center">
+                    <div className="deleteModel flex flex-col justify-center p-4 sm:p-6 bg-white rounded-lg max-w-sm w-full">
+                        <h3 className="text-lg sm:text-xl font-semibold mb-4">
+                            Delete Document
+                        </h3>
+                        <div className="flex items-start sm:items-center gap-3 mb-4">
+                            <img src={deleteImg} alt="Delete Icon" className="h-12 w-12" />
+                            <div>
+                                <h3 className="text-base sm:text-lg font-medium">
+                                    Do you want to delete this document?
+                                </h3>
+                                <p className="text-sm text-gray-500">Delete or Cancel</p>
                             </div>
                         </div>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => {
+                                    deleteDoc(docs._id, docID);
+                                }}
+                                className="p-2 sm:p-3 bg-red-500 text-white rounded-lg cursor-pointer flex-1 transition hover:bg-red-600"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsDeleteModelShow(false);
+                                }}
+                                className="p-2 sm:p-3 bg-gray-300 text-gray-800 rounded-lg cursor-pointer flex-1 transition hover:bg-gray-400"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
-                    </> : ""
-            }
+                </div>
+            )}
         </>
     );
 };

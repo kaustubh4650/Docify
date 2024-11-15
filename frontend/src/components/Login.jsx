@@ -12,9 +12,11 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const login = (e) => {
     e.preventDefault();
+    setLoading(true);
     fetch(api_base_url + "/login", {
       mode: "cors",
       method: "POST",
@@ -28,90 +30,132 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-
+        setLoading(false);
         if (data.success === true) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("isLoggedIn", true);
           localStorage.setItem("userId", data.userId);
           setTimeout(() => {
             navigate("/");
-          }, 100)
-
+          }, 100);
         } else {
           setError(data.message);
         }
-      })
-
+      });
   };
 
   return (
     <>
-      <div className="flex overflow-hidden items-center w-screen flex-col justify-center h-screen bg-[#F0F0F0]">
-        <div className="flex w-full items-center">
-          <div className="left flex w-[30%] flex-col ml-[100px]">
-            <img className="w-[210px]" src={logo} alt="" />
-            <form onSubmit={login} className="pl-3 mt-5 " action="">
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Email</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <MdEmail />
-                  </i>
+      <div className="flex items-center justify-center h-screen bg-[#F0F0F0]">
+        <div className="flex flex-col lg:flex-row items-center w-full max-w-screen-lg mx-auto">
+
+          <div className="w-full lg:w-1/2 px-6 lg:px-12 flex flex-col">
+            <img className="w-48 mx-auto lg:mx-0" src={logo} alt="Logo" />
+            <form
+              onSubmit={login}
+              className="mt-6 flex flex-col gap-4"
+              action=""
+            >
+
+              <div className="flex flex-col">
+                <label
+                  htmlFor="email"
+                  className="text-sm text-gray-600 mb-1"
+                >
+                  Email
+                </label>
+                <div className="flex items-center border rounded px-3 py-2">
+                  <MdEmail className="text-gray-500 mr-2" />
                   <input
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                    }}
+                    onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     type="email"
-                    placeholder="email"
+                    placeholder="Enter your email"
                     name="email"
                     id="email"
                     required
+                    className="flex-1 bg-transparent focus:outline-none text-sm"
                   />
                 </div>
               </div>
 
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Password</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <MdOutlineWifiPassword />
-                  </i>
+
+              <div className="flex flex-col">
+                <label
+                  htmlFor="password"
+                  className="text-sm text-gray-600 mb-1"
+                >
+                  Password
+                </label>
+                <div className="flex items-center border rounded px-3 py-2">
+                  <MdOutlineWifiPassword className="text-gray-500 mr-2" />
                   <input
-                    onChange={(e) => {
-                      setPwd(e.target.value);
-                    }}
+                    onChange={(e) => setPwd(e.target.value)}
                     value={pwd}
                     type="password"
-                    placeholder="password"
+                    placeholder="Enter your password"
                     name="password"
                     id="password"
                     required
+                    className="flex-1 bg-transparent focus:outline-none text-sm"
                   />
-                  <i className="cursor-pointer !mr-3 !text-[25px]">
-                    <IoEye />
-                  </i>
+                  <IoEye className="text-gray-500 cursor-pointer ml-2" />
                 </div>
               </div>
 
-              <p className="text-red-500 ml-5 text-[14px]">{error}</p>
 
-              <p className="ml-5 ">
-                Don't have an account ?
-                <Link className="text-blue-500 ml-2" to="/signup">
-                  SignUp
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+
+              <p className="text-sm">
+                Don't have an account?{" "}
+                <Link className="text-blue-500" to="/signup">
+                  Sign Up
                 </Link>
               </p>
 
-              <div className="text-center">
-                <button className="p-[10px] w-60 transition-all hover:bg-green-600 bg-green-500 text-white rounded-lg border-0  mt-3">
-                  Login
-                </button>
-              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`p-3 rounded-lg text-white transition ${loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600"
+                  }`}
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 animate-spin text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      ></path>
+                    </svg>
+                  </div>
+                ) : (
+                  "Login"
+                )}
+              </button>
             </form>
           </div>
-          <div className="right w-[60%] flex items-end justify-end">
-            <img className="h-full mt-8 mr-[200px]" src={rightImage} alt="" />
+
+
+          <div className="hidden lg:flex w-1/2 items-center justify-center">
+            <img className="w-3/4" src={rightImage} alt="Right Section" />
           </div>
         </div>
       </div>

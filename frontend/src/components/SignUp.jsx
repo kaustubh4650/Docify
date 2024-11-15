@@ -5,7 +5,7 @@ import { IoEye } from "react-icons/io5";
 import { MdEmail, MdOutlineWifiPassword } from "react-icons/md";
 import { FaPhone } from "react-icons/fa6";
 import nameTag from "../images/nameTag.png";
-import { json, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import rightImage from "../images/signUpRight.png";
 import { api_base_url } from "../Helper";
 
@@ -17,9 +17,11 @@ const SignUp = () => {
   const [phone, setPhone] = useState("");
   const [pwd, setPwd] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const createUser = (e) => {
     e.preventDefault();
+    setLoading(true)
     fetch(api_base_url + "/signUp", {
       mode: "cors",
       method: "POST",
@@ -36,7 +38,8 @@ const SignUp = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success == false) {
+        setLoading(false)
+        if (data.success === false) {
           setError(data.message);
         } else {
           navigate("/login");
@@ -45,137 +48,173 @@ const SignUp = () => {
   };
 
   return (
-    <>
-      <div className="flex overflow-hidden items-center w-screen flex-col justify-center h-screen bg-[#F0F0F0]">
-        <div className="flex w-full items-center">
-          <div className="left flex w-[30%] flex-col ml-[100px]">
-            <img className="w-[210px]" src={logo} alt="" />
-            <form onSubmit={createUser} className="pl-3 mt-5 " action="">
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Username</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <FaUser />
-                  </i>
-                  <input
-                    onChange={(e) => {
-                      setUsername(e.target.value);
-                    }}
-                    value={username}
-                    type="text"
-                    placeholder="username"
-                    name="username"
-                    id="username"
-                    required
-                  />
+    <div className="flex items-center justify-center min-h-screen bg-[#F0F0F0]">
+      <div className="flex flex-col lg:flex-row items-center w-full max-w-screen-lg mx-auto">
+
+        <div className="w-full lg:w-1/2 px-6 lg:px-12 flex flex-col">
+          <img className="w-48 mx-auto lg:mx-0" src={logo} alt="Logo" />
+          <form
+            onSubmit={createUser}
+            className="mt-6 flex flex-col gap-4"
+          >
+
+            <div className="flex flex-col">
+              <label htmlFor="username" className="text-sm text-gray-600 mb-1">
+                Username
+              </label>
+              <div className="flex items-center border rounded px-3 py-2">
+                <FaUser className="text-gray-500 mr-2" />
+                <input
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
+                  type="text"
+                  placeholder="Enter your username"
+                  name="username"
+                  id="username"
+                  required
+                  className="flex-1 bg-transparent focus:outline-none text-sm"
+                />
+              </div>
+            </div>
+
+
+            <div className="flex flex-col">
+              <label htmlFor="name" className="text-sm text-gray-600 mb-1">
+                Name
+              </label>
+              <div className="flex items-center border rounded px-3 py-2">
+                <img src={nameTag} alt="Name Tag" className="w-5 mr-2" />
+                <input
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  type="text"
+                  placeholder="Enter your name"
+                  name="name"
+                  id="name"
+                  required
+                  className="flex-1 bg-transparent focus:outline-none text-sm"
+                />
+              </div>
+            </div>
+
+
+            <div className="flex flex-col">
+              <label htmlFor="email" className="text-sm text-gray-600 mb-1">
+                Email
+              </label>
+              <div className="flex items-center border rounded px-3 py-2">
+                <MdEmail className="text-gray-500 mr-2" />
+                <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  type="email"
+                  placeholder="Enter your email"
+                  name="email"
+                  id="email"
+                  required
+                  className="flex-1 bg-transparent focus:outline-none text-sm"
+                />
+              </div>
+            </div>
+
+
+            <div className="flex flex-col">
+              <label htmlFor="phone" className="text-sm text-gray-600 mb-1">
+                Phone
+              </label>
+              <div className="flex items-center border rounded px-3 py-2">
+                <FaPhone className="text-gray-500 mr-2" />
+                <input
+                  onChange={(e) => setPhone(e.target.value)}
+                  value={phone}
+                  type="text"
+                  placeholder="Enter your phone number"
+                  name="phone"
+                  id="phone"
+                  maxLength={10}
+                  required
+                  className="flex-1 bg-transparent focus:outline-none text-sm"
+                />
+              </div>
+            </div>
+
+
+            <div className="flex flex-col">
+              <label htmlFor="password" className="text-sm text-gray-600 mb-1">
+                Password
+              </label>
+              <div className="flex items-center border rounded px-3 py-2">
+                <MdOutlineWifiPassword className="text-gray-500 mr-2" />
+                <input
+                  onChange={(e) => setPwd(e.target.value)}
+                  value={pwd}
+                  type="password"
+                  placeholder="Enter your password"
+                  name="password"
+                  id="password"
+                  required
+                  className="flex-1 bg-transparent focus:outline-none text-sm"
+                />
+                <IoEye className="text-gray-500 cursor-pointer ml-2" />
+              </div>
+            </div>
+
+
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+
+            {/* Login Link */}
+            <p className="text-sm">
+              Already have an account?{" "}
+              <Link className="text-blue-500" to="/login">
+                Login
+              </Link>
+            </p>
+
+
+            <button
+              type="submit"
+              disabled={loading} // Disable button while loading
+              className={`p-3 rounded-lg text-white transition ${loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+                }`}
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 animate-spin text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
                 </div>
-              </div>
+              ) : (
+                "Sign Up"
+              )}
+            </button>
+          </form>
+        </div>
 
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Name</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <img src={nameTag} alt="" />
-                  </i>
-                  <input
-                    onChange={(e) => {
-                      setName(e.target.value);
-                    }}
-                    value={name}
-                    type="text"
-                    placeholder="name"
-                    name="name"
-                    id="name"
-                    required
-                  />
-                </div>
-              </div>
 
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Email</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <MdEmail />
-                  </i>
-                  <input
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                    }}
-                    value={email}
-                    type="email"
-                    placeholder="email"
-                    name="email"
-                    id="email"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Phone</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <FaPhone />
-                  </i>
-                  <input
-                    onChange={(e) => {
-                      setPhone(e.target.value);
-                    }}
-                    value={phone}
-                    type="text"
-                    placeholder="phone"
-                    name="phone"
-                    id="phone"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="inputCon ">
-                <p className="text-[14px] text-[grey]">Password</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <MdOutlineWifiPassword />
-                  </i>
-                  <input
-                    onChange={(e) => {
-                      setPwd(e.target.value);
-                    }}
-                    value={pwd}
-                    type="password"
-                    placeholder="password"
-                    name="password"
-                    id="password"
-                    required
-                  />
-                  <i className="cursor-pointer !mr-3 !text-[25px]">
-                    <IoEye />
-                  </i>
-                </div>
-              </div>
-
-              <p className="text-red-500 ml-5 text-[14px]">{error}</p>
-
-              <p className="ml-5 ">
-                Already have an account{" "}
-                <Link className="text-blue-500" to="/login">
-                  Login
-                </Link>
-              </p>
-
-              <div className="text-center">
-                <button className="p-[10px] w-60 transition-all hover:bg-green-600 bg-green-500 text-white rounded-lg border-0  mt-3">
-                  Sign Up
-                </button>
-              </div>
-            </form>
-          </div>
-          <div className="right w-[60%] flex items-end justify-end">
-            <img className="h-full mt-8 mr-[200px]" src={rightImage} alt="" />
-          </div>
+        <div className="hidden lg:flex w-1/2 items-center justify-center">
+          <img className="w-3/4" src={rightImage} alt="Sign Up Illustration" />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

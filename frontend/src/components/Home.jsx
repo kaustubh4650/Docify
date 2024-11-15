@@ -64,76 +64,74 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <div className="flex items-center justify-between px-[100px]">
-        <h3 className="mt-7 mb-3 text-3xl">All Documents</h3>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-6 sm:px-10 lg:px-[100px] mt-6">
+        <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-4 sm:mb-0">
+          All Documents
+        </h3>
         <button
-          className="btnBlue"
+          className="btnBlue flex items-center gap-2 text-sm sm:text-base"
           onClick={() => {
             setIsCreateModelShow(true);
-            document.getElementById("title");
           }}
         >
-          <i>
-            <BsPlusLg />
-          </i>
+          <BsPlusLg />
           Create New Document
         </button>
       </div>
 
-      <div className="allDocs px-[100px] mt-4">
+
+      <div className="allDocs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 sm:px-10 lg:px-[100px] mt-6">
         {data
-          ? data.map((el, index) => {
-            return (
-              <>
-                <Docs
-                  docs={el}
-                  key={el}
-                  docID={`doc-${index + 1}`}
-                />
-              </>
-            );
-          })
+          ? data.map((el, index) => (
+            <Docs docs={el} key={index} docID={`doc-${index + 1}`} />
+          ))
           : ""}
       </div>
 
       {isCreateModelShow ? (
         <>
-          <div className="createDocsModelIcon top-0 left-0 bottom-0 right-0 fixed bg-[rgb(0,0,0,0.3)] w-screen h-screen flex flex-col items-center justify-center">
-            <div className="createDocsModel p-[15px] bg-[#fff] rounded-lg h-[30vh] w-[35vw]">
-              <h3 className="text-[20px]">Create New Document</h3>
 
-              <div className="inputCon mt-3">
-                <p className="text-[14px] text-[grey]">Title</p>
-                <div className="inputBox w-[100%]">
-                  <i>
-                    <MdOutlineTitle />
-                  </i>
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-11/12 sm:w-3/4 lg:w-1/3">
+              <h3 className="text-lg sm:text-xl font-semibold">
+                Create New Document
+              </h3>
+
+              <div className="mt-4">
+                <label htmlFor="title" className="block text-gray-500 mb-1">
+                  Title
+                </label>
+                <div className="flex items-center border rounded px-3 py-2">
+                  <MdOutlineTitle className="text-gray-400 mr-2" />
                   <input
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                    }}
+                    onChange={(e) => setTitle(e.target.value)}
                     value={title}
                     type="text"
-                    placeholder="Title"
+                    placeholder="Enter Title"
                     name="title"
                     id="title"
                     required
+                    className="flex-1 bg-transparent focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 w-full justify-between">
-                <button onClick={createDoc} className="btnBlue !min-w-[49%]">
-                  <i>
-                    <BsPlusLg />
-                  </i>
-                  Create New Document
+              {error && (
+                <p className="text-red-500 text-sm mt-2">{error}</p>
+              )}
+
+              <div className="flex items-center justify-between mt-6">
+                <button
+                  onClick={createDoc}
+                  className="btnBlue w-[48%] text-sm sm:text-base"
+                >
+                  <BsPlusLg className="mr-2" />
+                  Create Document
                 </button>
                 <button
-                  onClick={() => {
-                    setIsCreateModelShow(false);
-                  }}
-                  className="p-[10px] bg-[#d1d5db] text-black rounded-lg cursor-pointer border-0 min-w-[49%]"
+                  onClick={() => setIsCreateModelShow(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-black rounded-lg px-4 py-2 w-[48%] text-sm sm:text-base"
                 >
                   Cancel
                 </button>
@@ -141,9 +139,7 @@ const Home = () => {
             </div>
           </div>
         </>
-      ) : (
-        ""
-      )}
+      ) : null}
     </>
   );
 };
